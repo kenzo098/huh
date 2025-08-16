@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>كل انواع الكلايش الي تريدها تلكاها هنا</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -11,6 +12,13 @@
       color: #c9d1d9;
       margin: 0;
       padding: 0;
+      transition: background 0.3s, color 0.3s;
+      overflow-x: hidden;
+    }
+
+    body.light {
+      background-color: #f0f0f0;
+      color: #111;
     }
 
     header {
@@ -21,11 +29,14 @@
       font-weight: bold;
       border-bottom: 1px solid #30363d;
     }
+    body.light header {background:#fff; border-color:#ddd;}
 
     .container {
       max-width: 800px;
       margin: 2rem auto;
       padding: 1rem;
+      position: relative;
+      z-index: 2;
     }
 
     .search-box {
@@ -41,6 +52,7 @@
       background-color: #0d1117;
       color: #c9d1d9;
     }
+    body.light .search-box input {background:#fff; color:#111; border-color:#ccc;}
 
     .form {
       display: flex;
@@ -52,6 +64,7 @@
       border-radius: 10px;
       border: 1px solid #30363d;
     }
+    body.light .form {background:#fff; border-color:#ddd;}
 
     .form input, .form textarea {
       padding: 0.6rem;
@@ -61,20 +74,19 @@
       color: #c9d1d9;
       resize: vertical;
     }
+    body.light .form input, body.light .form textarea {background:#fafafa; color:#111; border-color:#ccc;}
 
     .form button {
       padding: 0.6rem;
       border: none;
       border-radius: 8px;
-      background-color: #238636;
+      background: linear-gradient(135deg,#238636,#2ea043);
       color: white;
       cursor: pointer;
       font-weight: bold;
+      transition: transform 0.2s ease;
     }
-
-    .form button:hover {
-      background-color: #2ea043;
-    }
+    .form button:hover {transform: scale(1.05);}
 
     .card {
       background-color: #161b22;
@@ -83,12 +95,22 @@
       padding: 1rem;
       margin-bottom: 1rem;
       position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.4s forwards;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    body.light .card {background:#fff; border-color:#ddd;}
+
+    @keyframes fadeIn {
+      to {opacity:1; transform: translateY(0);}
     }
 
-    .card-title {
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-    }
+    .card-title {font-weight: bold; margin-bottom: 0.5rem;}
 
     .card-text {
       white-space: pre-wrap;
@@ -100,6 +122,7 @@
       max-height: 200px;
       overflow-y: auto;
     }
+    body.light .card-text {background:#f7f7f7; border-color:#ddd;}
 
     .actions {
       position: absolute;
@@ -110,47 +133,115 @@
     }
 
     .icon-btn {
-      background: none;
-      border: none;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 6px;
       cursor: pointer;
       color: #c9d1d9;
-      font-size: 1.2rem;
+      font-size: 1rem;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
     }
+    body.light .icon-btn {background:#f0f0f0; border-color:#ccc; color:#111;}
 
-    .icon-btn:hover {
-      color: #58a6ff;
+    .icon-btn:hover {background: #30363d; transform: scale(1.1); color: #58a6ff;}
+    body.light .icon-btn:hover {background:#ddd; color:#0077ff;}
+
+    /* زر الوضع الليلي/النهاري */
+    .theme-toggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 3;
+      cursor: pointer;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #c9d1d9;
+    }
+    body.light .theme-toggle {background:#fff; border-color:#ddd; color:#111;}
+
+    /* زر عائم */
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg,#238636,#2ea043);
+      color: #fff;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      cursor: pointer;
+      z-index: 3;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      transition: transform 0.2s;
+    }
+    .fab:hover {transform: scale(1.1);}
+
+    /* خلفية نجوم */
+    .stars {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: url("https://i.ibb.co/YR6r6w0/stars-bg.png");
+      animation: moveStars 60s linear infinite;
+      z-index: 0;
+    }
+    @keyframes moveStars {
+      from {background-position:0 0;}
+      to {background-position:10000px 10000px;}
     }
   </style>
 </head>
 <body>
+  <div class="stars"></div>
+  <div class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></div>
   <header>كل انواع الكلايش الي تريدها تلكاها هنا</header>
   <div class="container">
-    
-    <!-- شريط البحث -->
     <div class="search-box">
       <input type="text" id="search" placeholder="ابحث عن عنوان الكليشة...">
     </div>
-
-    <!-- إضافة كليشة -->
     <div class="form">
       <input type="text" id="title" placeholder="عنوان الكليشة">
       <textarea id="text" rows="3" placeholder="اكتب الكليشة هنا..."></textarea>
       <button onclick="addCard()">إضافة كليشة</button>
     </div>
-
-    <!-- عرض الكلايش -->
     <div id="cards"></div>
   </div>
+  <div class="fab" onclick="scrollToForm()"><i class="fa-solid fa-plus"></i></div>
 
   <script>
     const cardsContainer = document.getElementById("cards");
     const searchInput = document.getElementById("search");
 
+    // تحميل الكلايش من التخزين
+    let saved = JSON.parse(localStorage.getItem("cards") || "[]");
+    saved.forEach(c => createCard(c.title, c.text));
+
     function addCard() {
       const title = document.getElementById("title").value.trim();
       const text = document.getElementById("text").value.trim();
       if (!title || !text) return;
+      createCard(title, text);
+      saveCards();
+      document.getElementById("title").value = "";
+      document.getElementById("text").value = "";
+    }
 
+    function createCard(title, text) {
       const card = document.createElement("div");
       card.className = "card";
 
@@ -158,35 +249,81 @@
         <div class="card-title">${title}</div>
         <div class="card-text">${text}</div>
         <div class="actions">
-          <button class="icon-btn" onclick="copyText(this)" title="نسخ الكليشة">📋</button>
-          <button class="icon-btn" onclick="deleteCard(this)" title="حذف الكليشة">🗑️</button>
+          <button class="icon-btn" onclick="copyText(this)" title="نسخ"><i class="fa-solid fa-copy"></i></button>
+          <button class="icon-btn" onclick="editCard(this)" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+          <button class="icon-btn" onclick="shareCard(this)" title="مشاركة"><i class="fa-solid fa-share"></i></button>
+          <button class="icon-btn" onclick="deleteCard(this)" title="حذف"><i class="fa-solid fa-trash"></i></button>
         </div>
       `;
 
       cardsContainer.prepend(card);
-
-      document.getElementById("title").value = "";
-      document.getElementById("text").value = "";
     }
 
     function copyText(btn) {
       const text = btn.closest(".card").querySelector(".card-text").innerText;
       navigator.clipboard.writeText(text);
-      btn.innerText = "✅";
-      setTimeout(() => btn.innerText = "📋", 1000);
+      const icon = btn.querySelector("i");
+      icon.className = "fa-solid fa-check";
+      setTimeout(() => icon.className = "fa-solid fa-copy", 1000);
+    }
+
+    function editCard(btn) {
+      const card = btn.closest(".card");
+      const title = card.querySelector(".card-title").innerText;
+      const text = card.querySelector(".card-text").innerText;
+      document.getElementById("title").value = title;
+      document.getElementById("text").value = text;
+      card.remove();
+      saveCards();
+    }
+
+    function shareCard(btn) {
+      const card = btn.closest(".card");
+      const text = card.querySelector(".card-title").innerText + ":\n" + card.querySelector(".card-text").innerText;
+      navigator.clipboard.writeText(text);
+      alert("تم نسخ الكليشة لمشاركتها ✅");
     }
 
     function deleteCard(btn) {
       btn.closest(".card").remove();
+      saveCards();
+    }
+
+    function saveCards() {
+      const data = [];
+      document.querySelectorAll(".card").forEach(card => {
+        data.push({
+          title: card.querySelector(".card-title").innerText,
+          text: card.querySelector(".card-text").innerText
+        });
+      });
+      localStorage.setItem("cards", JSON.stringify(data));
     }
 
     searchInput.addEventListener("input", function () {
       const value = this.value.toLowerCase();
       document.querySelectorAll(".card").forEach(card => {
         const title = card.querySelector(".card-title").innerText.toLowerCase();
-        card.style.display = title.includes(value) ? "block" : "none";
+        const body = card.querySelector(".card-text").innerText.toLowerCase();
+        card.style.display = title.includes(value) || body.includes(value) ? "block" : "none";
       });
     });
+
+    function toggleTheme() {
+      document.body.classList.toggle("light");
+      const icon = document.querySelector(".theme-toggle i");
+      if (document.body.classList.contains("light")) {
+        icon.className = "fa-solid fa-sun";
+      } else {
+        icon.className = "fa-solid fa-moon";
+      }
+    }
+
+    function scrollToForm() {
+      document.querySelector(".form").scrollIntoView({behavior:"smooth"});
+    }
+
+    window.addEventListener("beforeunload", saveCards);
   </script>
 </body>
 </html>
